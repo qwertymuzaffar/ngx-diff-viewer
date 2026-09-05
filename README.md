@@ -5,6 +5,8 @@
 [![license](https://img.shields.io/npm/l/ngx-diff-viewer)](LICENSE)
 [![Angular](https://img.shields.io/badge/Angular-%3E%3D19-dd0031)](https://angular.dev)
 
+**[Live Storybook demo](https://qwertymuzaffar.github.io/ngx-diff-viewer/)**
+
 Text diff viewer component for Angular - side-by-side and inline modes with a built-in LCS line diff. Zero runtime dependencies, themeable via CSS custom properties.
 
 ## Features
