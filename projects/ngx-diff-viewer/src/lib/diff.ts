@@ -106,3 +106,73 @@ export function toSideBySide(lines: DiffLine[]): DiffRow[] {
   }
   return rows;
 }
+
+/* ------------------------- intra-line diff ------------------------- */
+
+export interface IntralineSegment {
+  text: string;
+  changed: boolean;
+}
+
+export interface IntralinePair {
+  left: IntralineSegment[];
+  right: IntralineSegment[];
+}
+
+/** Above this length, char-level LCS is skipped (whole line marked changed). */
+const INTRALINE_LIMIT = 400;
+
+function mergeSegments(flags: boolean[], chars: string[]): IntralineSegment[] {
+  const out: IntralineSegment[] = [];
+  for (let i = 0; i < chars.length; i++) {
+    const last = out[out.length - 1];
+    if (last && last.changed === flags[i]) last.text += chars[i];
+    else out.push({ text: chars[i], changed: flags[i] });
+  }
+  return out;
+}
+
+/**
+ * Character-level diff of a replaced line pair, for highlighting the
+ * changed spans inside otherwise similar lines.
+ */
+export function intraline(oldStr: string, newStr: string): IntralinePair {
+  if (oldStr.length > INTRALINE_LIMIT || newStr.length > INTRALINE_LIMIT) {
+    return {
+      left: oldStr ? [{ text: oldStr, changed: true }] : [],
+      right: newStr ? [{ text: newStr, changed: true }] : [],
+    };
+  }
+  const a = [...oldStr];
+  const b = [...newStr];
+  const n = a.length;
+  const m = b.length;
+  const lcs: number[][] = Array.from({ length: n + 1 }, () => new Array<number>(m + 1).fill(0));
+  for (let i = n - 1; i >= 0; i--) {
+    for (let j = m - 1; j >= 0; j--) {
+      lcs[i][j] = a[i] === b[j] ? lcs[i + 1][j + 1] + 1 : Math.max(lcs[i + 1][j], lcs[i][j + 1]);
+    }
+  }
+  const leftFlags: boolean[] = [];
+  const rightFlags: boolean[] = [];
+  let i = 0;
+  let j = 0;
+  while (i < n && j < m) {
+    if (a[i] === b[j]) {
+      leftFlags.push(false);
+      rightFlags.push(false);
+      i++;
+      j++;
+    } else if (lcs[i + 1][j] >= lcs[i][j + 1]) {
+      leftFlags.push(true);
+      i++;
+    } else {
+      rightFlags.push(true);
+      j++;
+    }
+  }
+  while (i < n) { leftFlags.push(true); i++; }
+  while (j < m) { rightFlags.push(true); j++; }
+
+  return { left: mergeSegments(leftFlags, a), right: mergeSegments(rightFlags, b) };
+}

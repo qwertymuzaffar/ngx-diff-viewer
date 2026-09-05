@@ -87,3 +87,14 @@
 .ndv-delete { background: var(--ndv-del-bg); }
 .ndv-delete .ndv-sign, .ndv-delete .ndv-gutter { color: var(--ndv-del-ink); }
 .ndv-blank { background: var(--ndv-blank-bg); }
+
+/* Intra-line change highlighting inside replaced rows */
+.ndv-hl-add {
+  background: color-mix(in srgb, var(--ndv-add-ink) 24%, transparent);
+  border-radius: 2px;
+}
+
+.ndv-hl-del {
+  background: color-mix(in srgb, var(--ndv-del-ink) 22%, transparent);
+  border-radius: 2px;
+}

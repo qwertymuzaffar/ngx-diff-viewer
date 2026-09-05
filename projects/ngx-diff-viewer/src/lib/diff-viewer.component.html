@@ -17,11 +17,23 @@
       <div class="ndv-row" role="row">
         <div class="ndv-cell" [class]="'ndv-' + (row.left?.op ?? 'blank')">
           <span class="ndv-gutter">{{ row.left?.oldLine }}</span>
-          <span class="ndv-text">{{ row.left?.text }}</span>
+          <span class="ndv-text">
+            @if (row.segments) {
+              @for (seg of row.segments.left; track $index) {
+                <span [class.ndv-hl-del]="seg.changed">{{ seg.text }}</span>
+              }
+            } @else {{{ row.left?.text }}}
+          </span>
         </div>
         <div class="ndv-cell" [class]="'ndv-' + (row.right?.op ?? 'blank')">
           <span class="ndv-gutter">{{ row.right?.newLine }}</span>
-          <span class="ndv-text">{{ row.right?.text }}</span>
+          <span class="ndv-text">
+            @if (row.segments) {
+              @for (seg of row.segments.right; track $index) {
+                <span [class.ndv-hl-add]="seg.changed">{{ seg.text }}</span>
+              }
+            } @else {{{ row.right?.text }}}
+          </span>
         </div>
       </div>
     }

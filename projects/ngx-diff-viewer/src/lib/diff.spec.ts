@@ -1,4 +1,4 @@
-import { diffLines, diffStats, toSideBySide, type DiffLine } from './diff';
+import { diffLines, diffStats, intraline, toSideBySide, type DiffLine } from './diff';
 
 const ops = (lines: DiffLine[]) => lines.map((l) => `${l.op[0]}:${l.text}`);
 
@@ -89,3 +89,46 @@ describe('toSideBySide', () => {
     expect(changeRows.every((r) => r.right?.op === 'insert')).toBe(true);
   });
 });
+
+describe('intraline', () => {
+  it('marks only the changed middle of similar lines', () => {
+    const { left, right } = intraline('const value = 1;', 'const value = 42;');
+    expect(left.filter((s) => s.changed).map((s) => s.text)).toEqual(['1']);
+    expect(right.filter((s) => s.changed).map((s) => s.text)).toEqual(['42']);
+    expect(left.map((s) => s.text).join('')).toBe('const value = 1;');
+    expect(right.map((s) => s.text).join('')).toBe('const value = 42;');
+  });
+
+  it('marks everything changed for disjoint strings', () => {
+    const { left, right } = intraline('aaa', 'zzz');
+    expect(left).toEqual([{ text: 'aaa', changed: true }]);
+    expect(right).toEqual([{ text: 'zzz', changed: true }]);
+  });
+
+  it('marks nothing changed for identical strings', () => {
+    const { left, right } = intraline('same', 'same');
+    expect(left).toEqual([{ text: 'same', changed: false }]);
+    expect(right).toEqual([{ text: 'same', changed: false }]);
+  });
+
+  it('merges consecutive changed chars into one segment', () => {
+    const { right } = intraline('ab', 'aXYb');
+    expect(right).toEqual([
+      { text: 'a', changed: false },
+      { text: 'XY', changed: true },
+      { text: 'b', changed: false },
+    ]);
+  });
+
+  it('falls back to whole-line change above the length limit', () => {
+    const long = 'x'.repeat(500);
+    const { left } = intraline(long, 'y' + long);
+    expect(left).toEqual([{ text: long, changed: true }]);
+  });
+
+  it('handles empty sides', () => {
+    expect(intraline('', 'new').right).toEqual([{ text: 'new', changed: true }]);
+    expect(intraline('', 'new').left).toEqual([]);
+  });
+});
+

@@ -11,6 +11,7 @@ import { DiffViewerComponent, type DiffViewMode } from './diff-viewer.component'
     [oldLabel]="'v1.ts'"
     [newLabel]="'v2.ts'"
     [hideHeader]="hideHeader"
+    [disableIntraline]="disableIntraline"
   />`,
 })
 class HostComponent {
@@ -18,6 +19,7 @@ class HostComponent {
   newText = 'a\nnew\nc';
   mode: DiffViewMode = 'side-by-side';
   hideHeader = false;
+  disableIntraline = false;
 }
 
 describe('DiffViewerComponent', () => {
@@ -81,5 +83,19 @@ describe('DiffViewerComponent', () => {
   it('renders blank filler cells for unbalanced change blocks', () => {
     const f = createHost({ oldText: 'a\nb', newText: 'a\nx\ny\nb' });
     expect(el(f).querySelectorAll('.ndv-blank').length).toBeGreaterThan(0);
+  });
+
+  it('highlights intra-line changes in replace rows', () => {
+    const f = createHost({ oldText: 'const v = 1;', newText: 'const v = 42;' });
+    const dels = Array.from(el(f).querySelectorAll('.ndv-hl-del')).map((n) => n.textContent);
+    const adds = Array.from(el(f).querySelectorAll('.ndv-hl-add')).map((n) => n.textContent);
+    expect(dels).toEqual(['1']);
+    expect(adds).toEqual(['42']);
+  });
+
+  it('renders no intraline spans when disabled', () => {
+    const f = createHost({ oldText: 'const v = 1;', newText: 'const v = 42;', disableIntraline: true });
+    expect(el(f).querySelectorAll('.ndv-hl-del, .ndv-hl-add')).toHaveLength(0);
+    expect(el(f).textContent).toContain('const v = 42;');
   });
 });
