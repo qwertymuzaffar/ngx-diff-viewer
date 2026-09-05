@@ -1,0 +1,40 @@
+@if (!hideHeader()) {
+  <header class="ndv-header">
+    <span class="ndv-labels">{{ oldLabel() }} → {{ newLabel() }}</span>
+    <span class="ndv-stats">
+      <span class="ndv-stat-add">+{{ stats().additions }}</span>
+      <span class="ndv-stat-del">-{{ stats().deletions }}</span>
+      @if (!hasChanges()) {
+        <span class="ndv-stat-same">no changes</span>
+      }
+    </span>
+  </header>
+}
+
+@if (mode() === 'side-by-side') {
+  <div class="ndv-split" role="table">
+    @for (row of rows(); track $index) {
+      <div class="ndv-row" role="row">
+        <div class="ndv-cell" [class]="'ndv-' + (row.left?.op ?? 'blank')">
+          <span class="ndv-gutter">{{ row.left?.oldLine }}</span>
+          <span class="ndv-text">{{ row.left?.text }}</span>
+        </div>
+        <div class="ndv-cell" [class]="'ndv-' + (row.right?.op ?? 'blank')">
+          <span class="ndv-gutter">{{ row.right?.newLine }}</span>
+          <span class="ndv-text">{{ row.right?.text }}</span>
+        </div>
+      </div>
+    }
+  </div>
+} @else {
+  <div class="ndv-inline" role="table">
+    @for (line of lines(); track $index) {
+      <div class="ndv-cell" [class]="'ndv-' + line.op" role="row">
+        <span class="ndv-gutter">{{ line.oldLine }}</span>
+        <span class="ndv-gutter">{{ line.newLine }}</span>
+        <span class="ndv-sign">{{ line.op === 'insert' ? '+' : line.op === 'delete' ? '-' : ' ' }}</span>
+        <span class="ndv-text">{{ line.text }}</span>
+      </div>
+    }
+  </div>
+}

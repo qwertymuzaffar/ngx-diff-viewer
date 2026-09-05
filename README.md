@@ -1,59 +1,88 @@
-# NgxDiffViewer
+# ngx-diff-viewer
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.7.
+Text diff viewer component for Angular - side-by-side and inline modes with a built-in LCS line diff. Zero runtime dependencies, themeable via CSS custom properties.
 
-## Development server
+## Features
 
-To start a local development server, run:
+- **Built-in diff** - classic LCS line diff computed from `oldText`/`newText`; no external diff library
+- **Two modes** - GitHub-style `side-by-side` (change blocks aligned into rows) and unified `inline` with +/- gutters
+- **Stats header** - +additions / -deletions, optional (`hideHeader`)
+- **Signals API** - `input()` based, `OnPush`, recomputes on any input change
+- **Themeable** - all colors/fonts are `--ndv-*` CSS custom properties (dark theme included in Storybook)
+- **Tested** - 100% statement coverage on the diff engine and component
 
-```bash
-ng serve
-```
-
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Install
 
 ```bash
-ng generate component component-name
+npm install ngx-diff-viewer
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Usage
+
+```ts
+import { DiffViewerComponent } from 'ngx-diff-viewer';
+
+@Component({
+  imports: [DiffViewerComponent],
+  template: `
+    <ngx-diff-viewer
+      [oldText]="before"
+      [newText]="after"
+      mode="side-by-side"
+      oldLabel="v1.ts"
+      newLabel="v2.ts"
+    />`,
+})
+export class ReviewPage {
+  before = 'line 1\nline 2';
+  after = 'line 1\nline 2 changed';
+}
+```
+
+The diff engine is also exported standalone:
+
+```ts
+import { diffLines, diffStats, toSideBySide } from 'ngx-diff-viewer';
+
+const lines = diffLines(before, after);   // DiffLine[] with ops + line numbers
+const stats = diffStats(lines);           // { additions, deletions, unchanged }
+```
+
+## API
+
+### Inputs
+
+| Input | Type | Default | Description |
+|---|---|---|---|
+| `oldText` | `string` | required | Left/original text |
+| `newText` | `string` | required | Right/updated text |
+| `mode` | `'side-by-side' \| 'inline'` | `'side-by-side'` | View mode |
+| `oldLabel` / `newLabel` | `string` | `before` / `after` | Header labels |
+| `hideHeader` | `boolean` | `false` | Hide the labels/stats bar |
+
+### Theming
+
+```css
+ngx-diff-viewer {
+  --ndv-bg: #0d1117;
+  --ndv-ink: #c9d1d9;
+  --ndv-add-bg: #12261e;
+  --ndv-del-bg: #2d1215;
+}
+```
+
+Full list in `diff-viewer.component.scss`.
+
+## Development
 
 ```bash
-ng generate --help
+npm start                        # demo app
+ng test ngx-diff-viewer          # unit tests (vitest)
+ng run demo:storybook            # storybook
 ```
 
-## Building
+Requires Node 22+ and Angular 19+.
 
-To build the project run:
+## License
 
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+MIT

@@ -1,0 +1,89 @@
+/* Themeable via CSS custom properties. */
+:host {
+  --ndv-bg: #ffffff;
+  --ndv-ink: #1e293b;
+  --ndv-muted: #94a3b8;
+  --ndv-border: #e2e8f0;
+  --ndv-add-bg: #ecfdf5;
+  --ndv-add-ink: #047857;
+  --ndv-del-bg: #fef2f2;
+  --ndv-del-ink: #b91c1c;
+  --ndv-blank-bg: #f8fafc;
+  --ndv-font: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --ndv-font-size: 12.5px;
+  --ndv-radius: 8px;
+
+  display: block;
+  border: 1px solid var(--ndv-border);
+  border-radius: var(--ndv-radius);
+  overflow: hidden;
+  background: var(--ndv-bg);
+  font-family: var(--ndv-font);
+  font-size: var(--ndv-font-size);
+  color: var(--ndv-ink);
+}
+
+.ndv-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--ndv-border);
+  background: var(--ndv-blank-bg);
+  font-size: 12px;
+}
+
+.ndv-labels {
+  font-weight: 600;
+}
+
+.ndv-stats {
+  display: flex;
+  gap: 10px;
+}
+
+.ndv-stat-add { color: var(--ndv-add-ink); font-weight: 600; }
+.ndv-stat-del { color: var(--ndv-del-ink); font-weight: 600; }
+.ndv-stat-same { color: var(--ndv-muted); }
+
+.ndv-split .ndv-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.ndv-split .ndv-cell:first-child {
+  border-right: 1px solid var(--ndv-border);
+}
+
+.ndv-cell {
+  display: flex;
+  align-items: baseline;
+  min-height: 20px;
+  line-height: 20px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.ndv-gutter {
+  flex: 0 0 40px;
+  text-align: right;
+  padding-right: 10px;
+  color: var(--ndv-muted);
+  user-select: none;
+}
+
+.ndv-sign {
+  flex: 0 0 16px;
+  user-select: none;
+}
+
+.ndv-text {
+  flex: 1;
+  padding-right: 8px;
+}
+
+.ndv-insert { background: var(--ndv-add-bg); }
+.ndv-insert .ndv-sign, .ndv-insert .ndv-gutter { color: var(--ndv-add-ink); }
+.ndv-delete { background: var(--ndv-del-bg); }
+.ndv-delete .ndv-sign, .ndv-delete .ndv-gutter { color: var(--ndv-del-ink); }
+.ndv-blank { background: var(--ndv-blank-bg); }

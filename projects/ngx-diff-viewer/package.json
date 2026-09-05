@@ -1,0 +1,27 @@
+{
+  "name": "ngx-diff-viewer",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/common": "^22.1.0",
+    "@angular/core": "^22.1.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false,
+  "description": "Text diff viewer component for Angular - side-by-side and inline modes, built-in LCS diff, zero dependencies, themeable via CSS custom properties.",
+  "license": "MIT",
+  "author": "Muzaffar Qosimov",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qwertymuzaffar/ngx-diff-viewer.git"
+  },
+  "keywords": [
+    "angular",
+    "diff",
+    "diff-viewer",
+    "code-review",
+    "component",
+    "ngx"
+  ]
+}
