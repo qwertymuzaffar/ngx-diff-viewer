@@ -36,6 +36,14 @@ const meta: Meta<DiffViewerComponent> = {
   title: 'Diff/DiffViewer',
   component: DiffViewerComponent,
   parameters: { layout: 'padded' },
+  // Compodoc is off, so controls only exist for declared args/argTypes -
+  // expose the view options on every story.
+  argTypes: {
+    mode: { control: 'inline-radio', options: ['side-by-side', 'inline'] },
+    hideHeader: { control: 'boolean' },
+    disableIntraline: { control: 'boolean' },
+  },
+  args: { mode: 'side-by-side', hideHeader: false, disableIntraline: false },
 };
 export default meta;
 
@@ -100,7 +108,9 @@ export const DarkTheme: Story = {
           --ndv-del-bg:#2d1215; --ndv-del-ink:#ffa198;
           background:#0d1117; padding:16px;">
           <ngx-diff-viewer [oldText]="oldText" [newText]="newText"
-            [oldLabel]="oldLabel" [newLabel]="newLabel" />
+            [oldLabel]="oldLabel" [newLabel]="newLabel"
+            [mode]="mode" [hideHeader]="hideHeader"
+            [disableIntraline]="disableIntraline" />
         </div>`,
     }),
   ],
