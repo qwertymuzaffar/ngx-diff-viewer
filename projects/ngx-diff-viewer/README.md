@@ -1,64 +1,95 @@
-# NgxDiffViewer
+# ngx-diff-viewer
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.0.
+[![npm version](https://img.shields.io/npm/v/ngx-diff-viewer)](https://www.npmjs.com/package/ngx-diff-viewer)
+[![CI](https://github.com/qwertymuzaffar/ngx-diff-viewer/actions/workflows/ci.yml/badge.svg)](https://github.com/qwertymuzaffar/ngx-diff-viewer/actions/workflows/ci.yml)
+[![license](https://img.shields.io/npm/l/ngx-diff-viewer)](LICENSE)
+[![Angular](https://img.shields.io/badge/Angular-%3E%3D19-dd0031)](https://angular.dev)
 
-## Code scaffolding
+**[Live Storybook demo](https://qwertymuzaffar.github.io/ngx-diff-viewer/)**
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+Text diff viewer component for Angular - side-by-side and inline modes with a built-in LCS line diff. Zero runtime dependencies, themeable via CSS custom properties.
 
-```bash
-ng generate component component-name
-```
+## Features
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+- **Built-in diff** - classic LCS line diff computed from `oldText`/`newText`; no external diff library
+- **Two modes** - GitHub-style `side-by-side` (change blocks aligned into rows) and unified `inline` with +/- gutters
+- **Stats header** - +additions / -deletions, optional (`hideHeader`)
+- **Signals API** - `input()` based, `OnPush`, recomputes on any input change
+- **Themeable** - all colors/fonts are `--ndv-*` CSS custom properties (dark theme included in Storybook)
+- **Tested** - 100% statement coverage on the diff engine and component
 
-```bash
-ng generate --help
-```
-
-## Building
-
-To build the library, run:
-
-```bash
-ng build ngx-diff-viewer
-```
-
-This command will compile your project, and the build artifacts will be placed in the `dist/` directory.
-
-### Publishing the Library
-
-Once the project is built, you can publish your library by following these steps:
-
-1. Navigate to the `dist` directory:
-
-   ```bash
-   cd dist/ngx-diff-viewer
-   ```
-
-2. Run the `npm publish` command to publish your library to the npm registry:
-   ```bash
-   npm publish
-   ```
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Install
 
 ```bash
-ng test
+npm install ngx-diff-viewer
 ```
 
-## Running end-to-end tests
+## Usage
 
-For end-to-end (e2e) testing, run:
+```ts
+import { DiffViewerComponent } from 'ngx-diff-viewer';
+
+@Component({
+  imports: [DiffViewerComponent],
+  template: `
+    <ngx-diff-viewer
+      [oldText]="before"
+      [newText]="after"
+      mode="side-by-side"
+      oldLabel="v1.ts"
+      newLabel="v2.ts"
+    />`,
+})
+export class ReviewPage {
+  before = 'line 1\nline 2';
+  after = 'line 1\nline 2 changed';
+}
+```
+
+The diff engine is also exported standalone:
+
+```ts
+import { diffLines, diffStats, toSideBySide } from 'ngx-diff-viewer';
+
+const lines = diffLines(before, after);   // DiffLine[] with ops + line numbers
+const stats = diffStats(lines);           // { additions, deletions, unchanged }
+```
+
+## API
+
+### Inputs
+
+| Input | Type | Default | Description |
+|---|---|---|---|
+| `oldText` | `string` | required | Left/original text |
+| `newText` | `string` | required | Right/updated text |
+| `mode` | `'side-by-side' \| 'inline'` | `'side-by-side'` | View mode |
+| `oldLabel` / `newLabel` | `string` | `before` / `after` | Header labels |
+| `hideHeader` | `boolean` | `false` | Hide the labels/stats bar |
+
+### Theming
+
+```css
+ngx-diff-viewer {
+  --ndv-bg: #0d1117;
+  --ndv-ink: #c9d1d9;
+  --ndv-add-bg: #12261e;
+  --ndv-del-bg: #2d1215;
+}
+```
+
+Full list in `diff-viewer.component.scss`.
+
+## Development
 
 ```bash
-ng e2e
+npm start                        # demo app
+ng test ngx-diff-viewer          # unit tests (vitest)
+ng run demo:storybook            # storybook
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+Requires Node 22+ and Angular 19+.
 
-## Additional Resources
+## License
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+MIT
