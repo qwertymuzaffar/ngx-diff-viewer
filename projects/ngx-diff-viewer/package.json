@@ -23,5 +23,12 @@
     "code-review",
     "component",
     "ngx"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public",
+    "directory": "../../dist/ngx-diff-viewer"
+  },
+  "scripts": {
+    "prepublishOnly": "node -e \"console.error('ngx-diff-viewer is published from dist/ngx-diff-viewer (npm run release does this). Refusing to publish the sources.');process.exit(1)\""
+  }
 }
